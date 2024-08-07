@@ -1,44 +1,36 @@
 import os
 import datetime
+import sys
 
 
 def create_file(arguments: list) -> None:
-    if "-d" in arguments and "-f" in arguments:
-        path = define_directories(arguments)
+    path = define_directories(arguments)
+    if not check_directories(path):
         make_directories(path)
+
+    if "-f" in arguments:
         file_name = define_file_name(arguments)
         add_information_in_file(os.path.join(path, file_name))
-    elif "-d" in arguments:
-        path = define_directories(arguments)
-        make_directories(path)
-    elif "-f" in arguments:
-        file_name = define_file_name(arguments)
-        add_information_in_file(file_name)
 
 
-def make_directories(*args) -> None:
+def make_directories(taken_path: str) -> None:
     current_directory = os.getcwd()
-    new_directory = os.path.join(*args)
-    path = os.path.join(current_directory, new_directory)
-
-    try:
-        os.makedirs(path, exist_ok=False)
-        print(f"Directory {new_directory} created successfully")
-    except OSError:
-        print("Directory '%s' can not be created" % new_directory)
+    path = os.path.join(current_directory, taken_path)
+    os.makedirs(path, exist_ok=True)
 
 
 def define_file_name(arguments: list) -> str:
-    # a = "python create_file.py -d dir1 dir2 -f file.txt".split()
     return " ".join(arguments[arguments.index("-f") + 1:])
 
 
 def define_directories(arguments: list) -> str:
+    if "-d" not in arguments:
+        return ""
+    index_d = arguments.index("-d")
     if "-f" in arguments:
-        index_d = arguments.index("-d")
         index_f = arguments.index("-f")
-        return " ".join(arguments[index_d + 1: index_f])
-    return " ".join(arguments[arguments.index("-d") + 1:])
+        return os.path.join(*arguments[index_d + 1: index_f])
+    return os.path.join(*arguments[arguments.index("-d") + 1:])
 
 
 def add_information_in_file(file_name: str) -> None:
@@ -52,5 +44,13 @@ def add_information_in_file(file_name: str) -> None:
     with open(file_name, "a") as file:
         current_time = datetime.datetime.now()
         file.write(current_time.strftime("%Y-%m-%d %H:%M:%S") + "\n")
-        for line in lines_arr:
-            file.write(f"{line}\n")
+        for index, line in enumerate(lines_arr):
+            file.write(f"{index + 1} {line}\n")
+
+
+def check_directories(taken_path: str) -> bool:
+    return os.path.exists(taken_path)
+
+
+if __name__ == "__main__":
+    create_file(sys.argv)
