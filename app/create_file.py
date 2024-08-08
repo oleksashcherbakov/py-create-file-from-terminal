@@ -53,12 +53,17 @@ def add_information_in_file(file_name: str) -> None:
     except FileNotFoundError:
         no_file = "no file"
     with open(file_name, "a") as file:
-        if not no_file:
-            file.write("\n")
+        if no_file is False:
+            file.write("\n" + "\n")
         current_time = datetime.datetime.now()
-        file.write(current_time.strftime("%Y-%m-%d %H:%M:%S") + "\n")
-        for index, line in enumerate(lines_arr):
-            file.write(f"{index + 1} {line}\n")
+        file.write(current_time.strftime("%Y-%m-%d %H:%M:%S"))
+        if len(lines_arr) > 0:
+            file.write("\n")
+            for index, line in enumerate(lines_arr):
+                if len(lines_arr) - 1 > index:
+                    file.write(f"{index + 1} {line}\n")
+                else:
+                    file.write(f"{index + 1} {line}")
 
 
 def check_directories(taken_path: str) -> bool:
