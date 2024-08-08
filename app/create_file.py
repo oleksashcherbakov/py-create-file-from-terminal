@@ -5,8 +5,7 @@ import sys
 
 def create_file(arguments: list) -> None:
     path = define_directories(arguments)
-    if not check_directories(path):
-        make_directories(path)
+    make_directories(path)
 
     if "-f" in arguments:
         file_name = define_file_name(arguments)
@@ -64,10 +63,6 @@ def add_information_in_file(file_name: str) -> None:
                     file.write(f"{index + 1} {line}\n")
                 else:
                     file.write(f"{index + 1} {line}")
-
-
-def check_directories(taken_path: str) -> bool:
-    return os.path.exists(taken_path)
 
 
 if __name__ == "__main__":
