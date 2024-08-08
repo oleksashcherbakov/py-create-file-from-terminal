@@ -20,7 +20,8 @@ def make_directories(taken_path: str) -> None:
 
 
 def define_file_name(arguments: list) -> str:
-    return " ".join(arguments[arguments.index("-f") + 1:])
+    index_f = arguments.index("-f")
+    return " ".join(arguments[index_f + 1:index_f + 2])
 
 
 def define_directories(arguments: list) -> str:
@@ -29,7 +30,10 @@ def define_directories(arguments: list) -> str:
     index_d = arguments.index("-d")
     if "-f" in arguments:
         index_f = arguments.index("-f")
-        return os.path.join(*arguments[index_d + 1: index_f])
+        if index_f < index_d:
+            return os.path.join(*arguments[index_d + 1:])
+        else:
+            return os.path.join(*arguments[index_d + 1: index_f])
     return os.path.join(*arguments[arguments.index("-d") + 1:])
 
 
@@ -41,7 +45,16 @@ def add_information_in_file(file_name: str) -> None:
             lines_arr.append(new_string)
         else:
             break
+
+    no_file = False
+    try:
+        with open(file_name, "r") as file:
+            pass
+    except FileNotFoundError:
+        no_file = "no file"
     with open(file_name, "a") as file:
+        if not no_file:
+            file.write("\n")
         current_time = datetime.datetime.now()
         file.write(current_time.strftime("%Y-%m-%d %H:%M:%S") + "\n")
         for index, line in enumerate(lines_arr):
